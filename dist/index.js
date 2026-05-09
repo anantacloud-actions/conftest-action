@@ -35304,50 +35304,50 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
-/***/ 4720:
+/***/ 7451:
 /***/ ((module) => {
 
-module.exports = eval("require")("./lib/installer");
+module.exports = eval("require")("./lib/installer.js");
 
 
 /***/ }),
 
-/***/ 1623:
+/***/ 7663:
 /***/ ((module) => {
 
-module.exports = eval("require")("./lib/notifications/googlechat");
+module.exports = eval("require")("./lib/notifications/googlechat.js");
 
 
 /***/ }),
 
-/***/ 1977:
+/***/ 7476:
 /***/ ((module) => {
 
-module.exports = eval("require")("./lib/notifications/slack");
+module.exports = eval("require")("./lib/notifications/slack.js");
 
 
 /***/ }),
 
-/***/ 5067:
+/***/ 1182:
 /***/ ((module) => {
 
-module.exports = eval("require")("./lib/notifications/teams");
+module.exports = eval("require")("./lib/notifications/teams.js");
 
 
 /***/ }),
 
-/***/ 6619:
+/***/ 8622:
 /***/ ((module) => {
 
-module.exports = eval("require")("./lib/sarif");
+module.exports = eval("require")("./lib/sarif.js");
 
 
 /***/ }),
 
-/***/ 5474:
+/***/ 1101:
 /***/ ((module) => {
 
-module.exports = eval("require")("./lib/scanner");
+module.exports = eval("require")("./lib/scanner.js");
 
 
 /***/ }),
@@ -35665,18 +35665,18 @@ module.exports = require("util");
 var __webpack_exports__ = {};
 const core = __nccwpck_require__(7484);
 const github = __nccwpck_require__(3228);
-const { installConftest } = __nccwpck_require__(4720);
-const { scan } = __nccwpck_require__(5474);
-const { generateSarif } = __nccwpck_require__(6619);
+const { installConftest } = __nccwpck_require__(7451);
+const { scan } = __nccwpck_require__(1101);
+const { generateSarif } = __nccwpck_require__(8622);
 const {
   sendSlackNotification
-} = __nccwpck_require__(1977);
+} = __nccwpck_require__(7476);
 const {
   sendGoogleChatNotification
-} = __nccwpck_require__(1623);
+} = __nccwpck_require__(7663);
 const {
   sendTeamsNotification
-} = __nccwpck_require__(5067);
+} = __nccwpck_require__(1182);
 
 async function run() {
 
