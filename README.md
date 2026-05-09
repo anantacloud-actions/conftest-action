@@ -13,7 +13,6 @@
 
 </p>
 
----
 
 # 🚀 Overview
 
@@ -32,7 +31,6 @@ It brings together:
 
 Tiny Rego rules become giant laser fences around your cloud ☁️⚡
 
----
 
 # ✨ Features
 
@@ -49,7 +47,6 @@ Tiny Rego rules become giant laser fences around your cloud ☁️⚡
 | GitHub Marketplace Ready | ✅ |
 | Node20 Runtime | ✅ |
 
----
 
 # 🧠 Supported Scan Types
 
@@ -60,7 +57,6 @@ Tiny Rego rules become giant laser fences around your cloud ☁️⚡
 | `helm` | Helm rendered template scanning |
 | `dockerfile` | Dockerfile best practice validation |
 
----
 
 # 📦 Installation
 
@@ -70,62 +66,47 @@ Tiny Rego rules become giant laser fences around your cloud ☁️⚡
 uses: your-org/conftest-action@v1
 ```
 
----
-
 # ⚡ Quick Start
 
 ## Terraform Example
 
 ```yaml
 name: Terraform Security Scan
-
 on:
   pull_request:
   push:
-
 permissions:
   security-events: write
   contents: read
-
 jobs:
   conftest:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: hashicorp/setup-terraform@v3
-
       - name: Run Conftest
         uses: anantacloud-actions/conftest-action@v1
         with:
           scan-type: terraform
           files: terraform/
           policy-path: policy/
-
       - name: Upload SARIF
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: conftest-results.sarif
 ```
 
----
-
 # ☸️ Kubernetes Example
 
 ```yaml
 name: Kubernetes Policy Scan
-
 on:
   pull_request:
-
 jobs:
   scan:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Scan Kubernetes YAML
         uses: anantacloud-actions/conftest-action@v1
         with:
@@ -134,25 +115,18 @@ jobs:
           policy-path: policy/
 ```
 
----
-
 # ⛵ Helm Example
 
 ```yaml
 name: Helm Policy Scan
-
 on:
   pull_request:
-
 jobs:
   scan:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: azure/setup-helm@v4
-
       - name: Scan Helm Chart
         uses: anantacloud-actions/conftest-action@v1
         with:
@@ -161,23 +135,17 @@ jobs:
           policy-path: policy/
 ```
 
----
-
 # 🐳 Dockerfile Example
 
 ```yaml
 name: Dockerfile Security Scan
-
 on:
   pull_request:
-
 jobs:
   scan:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Scan Dockerfile
         uses: anantacloud-actions/conftest-action@v1
         with:
@@ -186,7 +154,6 @@ jobs:
           policy-path: policy/
 ```
 
----
 
 # ⚙️ Inputs
 
@@ -198,7 +165,6 @@ jobs:
 | `conftest-version` | ❌ | `0.58.0` | Conftest version |
 | `upload-sarif` | ❌ | `true` | Generate SARIF report |
 
----
 
 # 📂 Repository Structure
 
@@ -218,7 +184,6 @@ jobs:
 └── README.md
 ```
 
----
 
 # 🛡️ Example Policies
 
@@ -237,8 +202,6 @@ deny[msg] {
 }
 ```
 
----
-
 ## Dockerfile Latest Tag Policy
 
 ```rego
@@ -254,8 +217,6 @@ deny[msg] {
 }
 ```
 
----
-
 ## Terraform Public S3 Policy
 
 ```rego
@@ -270,8 +231,6 @@ deny[msg] {
   msg := "Public S3 buckets are forbidden"
 }
 ```
-
----
 
 # 🔥 SARIF + GitHub Security
 
@@ -292,7 +251,6 @@ GitHub Repository
 
 Your infrastructure policies become visible security signals across the entire engineering organization ⚡
 
----
 
 # 🧪 Local Development
 
@@ -302,23 +260,17 @@ Your infrastructure policies become visible security signals across the entire e
 npm install
 ```
 
----
-
 ## Build Dist Folder
 
 ```bash
 npm run build
 ```
 
----
-
 ## Run Locally
 
 ```bash
 node index.js
 ```
-
----
 
 # 📦 Build Using NCC
 
@@ -340,8 +292,6 @@ dist/
 └── index.js
 ```
 
----
-
 # 🧬 Future Roadmap
 
 | Feature | Status |
@@ -356,7 +306,6 @@ dist/
 | Trivy Integration | 🚧 |
 | Kyverno Compatibility | 🚧 |
 
----
 
 # 🤝 Contributing
 
@@ -364,13 +313,9 @@ PRs are welcome.
 
 Ideas, policies, integrations, and cloud defense wizardry are always appreciated 🧙‍♂️☁️
 
----
-
 # 📜 License
 
 MIT License
-
----
 
 # ⭐ Support
 
@@ -379,8 +324,6 @@ If this project helped secure your cloud infrastructure:
 - ⭐ Star the repository
 - 🍴 Fork it
 - 🛡️ Share it with your platform engineering team
-
----
 
 # 💥 Philosophy
 
