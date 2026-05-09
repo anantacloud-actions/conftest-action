@@ -1,17 +1,17 @@
 const core = require("@actions/core");
 const github = require("@actions/github");
-const { installConftest } = require("./lib/installer.js");
-const { scan } = require("./lib/scanner.js");
-const { generateSarif } = require("./lib/sarif.js");
+const { installConftest } = require("./lib/installer");
+const { scan } = require("./lib/scanner");
+const { generateSarif } = require("./lib/sarif");
 const {
   sendSlackNotification
-} = require("./lib/notifications/slack.js");
+} = require("./lib/notifications/slack");
 const {
   sendGoogleChatNotification
-} = require("./lib/notifications/googlechat.js");
+} = require("./lib/notifications/googlechat");
 const {
   sendTeamsNotification
-} = require("./lib/notifications/teams.js");
+} = require("./lib/notifications/teams");
 
 async function run() {
 
