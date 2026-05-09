@@ -1,0 +1,35 @@
+name: "Advanced Conftest Scan"
+description: "Conftest IaC Policy Scanner with SARIF Support"
+author: "Ananta Cloud"
+
+inputs:
+  scan-type:
+    description: "terraform|kubernetes|helm|dockerfile"
+    required: true
+
+  files:
+    description: "Files or directories"
+    required: true
+
+  policy-path:
+    description: "OPA Policy directory"
+    required: false
+    default: "policy"
+
+  conftest-version:
+    description: "Conftest version"
+    required: false
+    default: "0.58.0"
+
+  upload-sarif:
+    description: "Upload SARIF to GitHub Security"
+    required: false
+    default: "true"
+
+runs:
+  using: "node20"
+  main: "index.js"
+
+branding:
+  icon: "shield"
+  color: "red"
