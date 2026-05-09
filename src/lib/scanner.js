@@ -2,11 +2,16 @@ const exec = require("@actions/exec");
 
 const {
   prepareTerraform
-} = require("./terraform");
+} = require("./terraform.js");
 
 const {
   prepareHelm
-} = require("./helm");
+} = require("./helm.js");
+
+const {
+  prepareDocker
+} = require("./docker.js");
+
 
 async function scan({
   conftest,
@@ -16,25 +21,22 @@ async function scan({
 }) {
 
   let target = files;
-
   switch (scanType) {
-
     case "terraform":
-      target = await prepareTerraform(files);
+      target =
+        await prepareTerraform(files);
       break;
-
     case "helm":
-      target = await prepareHelm(files);
+      target =
+        await prepareHelm(files);
       break;
-
     case "dockerfile":
-      target = files;
+      target =
+        await prepareDocker(files);
       break;
-
     case "kubernetes":
       target = files;
       break;
-
     default:
       throw new Error(
         `Unsupported scan type ${scanType}`
@@ -42,7 +44,6 @@ async function scan({
   }
 
   let output = "";
-
   await exec.exec(
     conftest,
     [
@@ -55,16 +56,13 @@ async function scan({
     ],
     {
       ignoreReturnCode: true,
-
       listeners: {
-
         stdout: data => {
           output += data.toString();
         }
       }
     }
   );
-
   return JSON.parse(output);
 }
 

@@ -41175,6 +41175,20 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
+/***/ 9841:
+/***/ ((module) => {
+
+async function prepareDocker(path) {
+  return path;
+}
+
+module.exports = {
+  prepareDocker
+};
+
+
+/***/ }),
+
 /***/ 8505:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -41266,6 +41280,159 @@ async function installConftest(version) {
 
 module.exports = {
   installConftest
+};
+
+
+/***/ }),
+
+/***/ 1865:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const core = __nccwpck_require__(7484);
+function printBanner(scanType) {
+
+  core.info("");
+  core.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  core.info("🛡️ ADVANCED CONTFEST POLICY SCAN");
+  core.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  core.info(`📦 Scan Type: ${scanType}`);
+  core.info("");
+}
+
+function printSummary({
+  scannedFiles,
+  violations,
+  warnings
+}) {
+
+  core.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  core.info(
+    `✅ Files Scanned: ${scannedFiles}`
+  );
+  core.info(
+    `❌ Violations: ${violations}`
+  );
+  core.info(
+    `⚠️ Warnings: ${warnings}`
+  );
+  core.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  core.info("");
+}
+
+function printViolations(results) {
+  core.startGroup(
+    "🚨 POLICY VIOLATIONS"
+  );
+
+  for (const result of results) {
+
+    if (!result.failures) {
+      continue;
+    }
+
+    for (const failure of result.failures) {
+
+      core.error(
+        `❌ ${failure.msg}`,
+        {
+          file: result.filename
+        }
+      );
+
+      core.info(
+        `   └─ File: ${result.filename}`
+      );
+    }
+  }
+
+  core.endGroup();
+}
+
+function generateScore(total, failed) {
+  if (total === 0) {
+    return 100;
+  }
+
+  return Math.max(
+    0,
+    Math.round(
+      ((total - failed) / total) * 100
+    )
+  );
+}
+
+function printComplianceScore(score) {
+  const totalBars = 20;
+  const filled =
+    Math.round(
+      (score / 100) * totalBars
+    );
+
+  const empty =
+    totalBars - filled;
+
+  const progress =
+    "█".repeat(filled) +
+    "░".repeat(empty);
+
+  core.info("");
+  core.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  core.info("📊 COMPLIANCE SCORE");
+  core.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  core.info(
+    `${progress} ${score}%`
+  );
+  core.info("");
+}
+
+async function writeGithubSummary({
+  scanType,
+  violations,
+  score
+}) {
+
+  await core.summary
+    .addHeading(
+      "🛡️ Advanced Conftest Scan"
+    )
+    .addTable([
+      [
+        {
+          data: "Metric",
+          header: true
+        },
+        {
+          data: "Value",
+          header: true
+        }
+      ],
+      [
+        "Scan Type",
+        scanType
+      ],
+      [
+        "Violations",
+        violations.toString()
+      ],
+      [
+        "Compliance Score",
+        `${score}%`
+      ]
+    ])
+    .addBreak()
+    .addQuote(
+      "Infrastructure should fail policy validation before it fails production."
+    )
+    .write();
+}
+
+module.exports = {
+  printBanner,
+  printSummary,
+  printViolations,
+  generateScore,
+  printComplianceScore,
+  writeGithubSummary
 };
 
 
@@ -41662,6 +41829,11 @@ const {
   prepareHelm
 } = __nccwpck_require__(8505);
 
+const {
+  prepareDocker
+} = __nccwpck_require__(9841);
+
+
 async function scan({
   conftest,
   scanType,
@@ -41670,25 +41842,22 @@ async function scan({
 }) {
 
   let target = files;
-
   switch (scanType) {
-
     case "terraform":
-      target = await prepareTerraform(files);
+      target =
+        await prepareTerraform(files);
       break;
-
     case "helm":
-      target = await prepareHelm(files);
+      target =
+        await prepareHelm(files);
       break;
-
     case "dockerfile":
-      target = files;
+      target =
+        await prepareDocker(files);
       break;
-
     case "kubernetes":
       target = files;
       break;
-
     default:
       throw new Error(
         `Unsupported scan type ${scanType}`
@@ -41696,7 +41865,6 @@ async function scan({
   }
 
   let output = "";
-
   await exec.exec(
     conftest,
     [
@@ -41709,16 +41877,13 @@ async function scan({
     ],
     {
       ignoreReturnCode: true,
-
       listeners: {
-
         stdout: data => {
           output += data.toString();
         }
       }
     }
   );
-
   return JSON.parse(output);
 }
 
@@ -41736,34 +41901,44 @@ const exec = __nccwpck_require__(5236);
 const fs = __nccwpck_require__(9896);
 
 async function prepareTerraform(path) {
+  await exec.exec(
+    "terraform",
+    [
+      "-chdir=" + path,
+      "init",
+      "-input=false"
+    ]
+  );
 
-  await exec.exec("terraform", [
-    "-chdir=" + path,
-    "init",
-    "-input=false"
-  ]);
-
-  await exec.exec("terraform", [
-    "-chdir=" + path,
-    "plan",
-    "-out=tfplan"
-  ]);
+  await exec.exec(
+    "terraform",
+    [
+      "-chdir=" + path,
+      "plan",
+      "-refresh=false",
+      "-lock=false",
+      "-out=tfplan"
+    ]
+  );
 
   let output = "";
 
-  await exec.exec("terraform", [
-    "-chdir=" + path,
-    "show",
-    "-json",
-    "tfplan"
-  ], {
-    listeners: {
-
-      stdout: data => {
-        output += data.toString();
+  await exec.exec(
+    "terraform",
+    [
+      "-chdir=" + path,
+      "show",
+      "-json",
+      "tfplan"
+    ],
+    {
+      listeners: {
+        stdout: data => {
+          output += data.toString();
+        }
       }
     }
-  });
+  );
 
   fs.writeFileSync(
     `${path}/tfplan.json`,
@@ -47497,21 +47672,43 @@ module.exports = /*#__PURE__*/JSON.parse('{"application/1d-interleaved-parityfec
 var __webpack_exports__ = {};
 const core = __nccwpck_require__(7484);
 const github = __nccwpck_require__(3228);
-const { installConftest } = __nccwpck_require__(6325);
-const { scan } = __nccwpck_require__(4447);
-const { generateSarif } = __nccwpck_require__(2232);
+
+const {
+  installConftest
+} = __nccwpck_require__(6325);
+
+const {
+  scan
+} = __nccwpck_require__(4447);
+
+const {
+  generateSarif
+} = __nccwpck_require__(2232);
+
 const {
   sendSlackNotification
 } = __nccwpck_require__(6654);
+
 const {
   sendGoogleChatNotification
 } = __nccwpck_require__(2301);
+
 const {
   sendTeamsNotification
 } = __nccwpck_require__(32);
 
-async function run() {
+const {
+  printBanner,
+  printSummary,
+  printViolations,
+  generateScore,
+  printComplianceScore,
+  writeGithubSummary
 
+} = __nccwpck_require__(1865);
+
+
+async function run() {
   try {
     const scanType =
       core.getInput("scan-type");
@@ -47537,11 +47734,19 @@ async function run() {
     const teamsWebhook =
       core.getInput("teams-webhook");
 
-    core.info("Installing Conftest");
+    printBanner(scanType);
+
+    core.info(
+      "⬇️ Installing Conftest"
+    );
+
     const conftest =
       await installConftest(version);
 
-    core.info("Running policy scan");
+    core.info(
+      "🔍 Running policy scan"
+    );
+
     const results = await scan({
       conftest,
       scanType,
@@ -47549,8 +47754,12 @@ async function run() {
       policyPath
     });
 
+
     if (uploadSarif) {
-      core.info("Generating SARIF");
+      core.info(
+        "🧠 Generating SARIF report"
+      );
+
       await generateSarif(results);
     }
 
@@ -47559,8 +47768,41 @@ async function run() {
       if (!result.failures) {
         continue;
       }
+
       findings.push(...result.failures);
     }
+
+    const scannedFiles =
+      results.length;
+
+    const violations =
+      findings.length;
+
+    const warnings = 0;
+
+    printSummary({
+      scannedFiles,
+      violations,
+      warnings
+    });
+
+    printViolations(results);
+
+    const score =
+      generateScore(
+        scannedFiles,
+        violations
+      );
+
+
+    printComplianceScore(score);
+
+    await writeGithubSummary({
+      scanType,
+      violations,
+      score
+    });
+
 
     if (findings.length > 0) {
       const payload = {
@@ -47577,27 +47819,45 @@ async function run() {
           github.context.actor
       };
 
+      core.info(
+        "💬 Sending Slack notification"
+      );
+
       await sendSlackNotification({
         webhook: slackWebhook,
         ...payload
       });
+
+      core.info(
+        "💬 Sending Google Chat notification"
+      );
 
       await sendGoogleChatNotification({
         webhook: googleChatWebhook,
         ...payload
       });
 
+      core.info(
+        "💬 Sending Teams notification"
+      );
       await sendTeamsNotification({
         webhook: teamsWebhook,
         ...payload
       });
-      core.setFailed(
-        `Conftest violations found: ${findings.length}`
-      );
-    }
-    core.info("Policy scan completed");
-  } catch (err) {
 
+      core.setFailed(
+        `❌ Conftest violations found: ${violations}`
+      );
+      return;
+    }
+
+    core.info("");
+    core.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    core.info("✅ POLICY SCAN PASSED");
+    core.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    core.info("☁️ Infrastructure guardrails active");
+    core.info("");
+  } catch (err) {
     core.setFailed(err.message);
   }
 }
