@@ -47704,7 +47704,6 @@ const {
   generateScore,
   printComplianceScore,
   writeGithubSummary
-
 } = __nccwpck_require__(1865);
 
 
@@ -47754,7 +47753,6 @@ async function run() {
       policyPath
     });
 
-
     if (uploadSarif) {
       core.info(
         "🧠 Generating SARIF report"
@@ -47768,7 +47766,6 @@ async function run() {
       if (!result.failures) {
         continue;
       }
-
       findings.push(...result.failures);
     }
 
@@ -47794,7 +47791,6 @@ async function run() {
         violations
       );
 
-
     printComplianceScore(score);
 
     await writeGithubSummary({
@@ -47802,7 +47798,6 @@ async function run() {
       violations,
       score
     });
-
 
     if (findings.length > 0) {
       const payload = {
@@ -47819,34 +47814,50 @@ async function run() {
           github.context.actor
       };
 
+      if (slackWebhook) {
+        core.info(
+          "💬 Sending Slack notification"
+        );
+
+        await sendSlackNotification({
+          webhook: slackWebhook,
+          ...payload
+        });
+      }
+
+      if (googleChatWebhook) {
+        core.info(
+          "💬 Sending Google Chat notification"
+        );
+
+        await sendGoogleChatNotification({
+          webhook: googleChatWebhook,
+          ...payload
+        });
+      }
+
+      if (teamsWebhook) {
+        core.info(
+          "💬 Sending Teams notification"
+        );
+
+        await sendTeamsNotification({
+          webhook: teamsWebhook,
+          ...payload
+        });
+      }
+
+
+      core.info("");
+      core.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+      core.info("🚨 POLICY VIOLATIONS DETECTED");
+      core.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
       core.info(
-        "💬 Sending Slack notification"
+        `❌ Total Violations: ${violations}`
       );
-
-      await sendSlackNotification({
-        webhook: slackWebhook,
-        ...payload
-      });
-
-      core.info(
-        "💬 Sending Google Chat notification"
-      );
-
-      await sendGoogleChatNotification({
-        webhook: googleChatWebhook,
-        ...payload
-      });
-
-      core.info(
-        "💬 Sending Teams notification"
-      );
-      await sendTeamsNotification({
-        webhook: teamsWebhook,
-        ...payload
-      });
-
+      core.info("");
       core.setFailed(
-        `❌ Conftest violations found: ${violations}`
+        `Conftest violations found: ${violations}`
       );
       return;
     }
