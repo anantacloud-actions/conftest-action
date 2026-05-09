@@ -1,35 +1,40 @@
 name: "Advanced Conftest Scan"
-description: "Conftest IaC Policy Scanner with SARIF Support"
+description: "Conftest IaC Policy Scanner with SARIF, Slack, Google Chat and Teams notifications"
 author: "Ananta Cloud"
+
+branding:
+  icon: "shield"
+  color: "red"
 
 inputs:
   scan-type:
     description: "terraform|kubernetes|helm|dockerfile"
     required: true
-
   files:
-    description: "Files or directories"
+    description: "Files or directories to scan"
     required: true
-
   policy-path:
-    description: "OPA Policy directory"
+    description: "Path to Rego policies"
     required: false
     default: "policy"
-
   conftest-version:
     description: "Conftest version"
     required: false
     default: "0.58.0"
-
   upload-sarif:
-    description: "Upload SARIF to GitHub Security"
+    description: "Generate SARIF report"
     required: false
     default: "true"
+  slack-webhook:
+    description: "Slack Incoming Webhook"
+    required: false
+  google-chat-webhook:
+    description: "Google Chat Incoming Webhook"
+    required: false
+  teams-webhook:
+    description: "Microsoft Teams Incoming Webhook"
+    required: false
 
 runs:
   using: "node20"
   main: "dist/index.js"
-
-branding:
-  icon: "shield"
-  color: "red"
