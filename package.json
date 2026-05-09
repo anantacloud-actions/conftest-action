@@ -1,40 +1,24 @@
 {
   "name": "conftest-action",
   "version": "1.0.0",
-  "description": "Advanced GitHub Action for Conftest with SARIF and multi-format IaC scanning",
+  "description": "Advanced Conftest GitHub Action",
   "main": "dist/index.js",
   "scripts": {
-    "build": "ncc build src/index.js -o dist",
+    "build": "ncc build index.js -o dist",
     "package": "npm run build",
-    "lint": "eslint .",
-    "format": "prettier --write .",
     "test": "node index.js"
   },
-  "keywords": [
-    "github-actions",
-    "conftest",
-    "opa",
-    "terraform",
-    "kubernetes",
-    "helm",
-    "dockerfile",
-    "security",
-    "sarif",
-    "policy-as-code"
-  ],
-  "author": "Ananta Cloud",
-  "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.11.1",
     "@actions/exec": "^1.1.1",
-    "@actions/tool-cache": "^2.0.1"
+    "@actions/github": "^6.0.0",
+    "@actions/tool-cache": "^2.0.1",
+    "axios": "^1.9.0"
   },
   "overrides": {
     "undici": "^6.23.1"
   },
   "devDependencies": {
-    "@vercel/ncc": "^0.38.1",
-    "eslint": "^9.26.0",
-    "prettier": "^3.5.3"
+    "@vercel/ncc": "^0.38.1"
   }
 }
