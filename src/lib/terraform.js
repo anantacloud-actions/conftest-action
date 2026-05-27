@@ -33,6 +33,7 @@ async function prepareTerraform(path) {
       "tfplan"
     ],
     {
+      silent: true,
       listeners: {
         stdout: data => {
           output += data.toString();
